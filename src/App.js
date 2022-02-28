@@ -1,23 +1,40 @@
-import logo from './logo.svg';
 import './App.css';
+import {IntlProvider, FormattedMessage} from 'react-intl';
+import {useState, useEffect} from 'react';
+
+const messages = {
+  "tr-TR" : {
+    title: "Merhaba Dünya",
+    description: "{count} yeni mesajınız var"
+  },
+  "en-TR" : {
+    title : "Hello World",
+    description: "You have {count} new messages"
+  }
+}
 
 function App() {
+
+  const isLocale = localStorage.getItem("locale")
+  const defaultLocale = isLocale ? isLocale : navigator.language 
+  const [locale,setLocale] = useState(defaultLocale)
+
+  useEffect(() => {
+    localStorage.setItem("locale",locale)
+  },[locale])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+      <IntlProvider locale={locale} messages={messages[locale]}>
+        <FormattedMessage id='title' />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          <FormattedMessage id='description' values={{count : 3}} />
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <br /><br />
+        <button onClick={() => { setLocale("tr-TR")} }>TR</button>
+        <button onClick={() => { setLocale("en-TR")} }>EN</button>
+      </IntlProvider>
+      
     </div>
   );
 }
